@@ -1,0 +1,272 @@
+/* ============================================================
+   Atardecer — versión suave
+   Misma composición (formas, luces, difuminados), pero con una
+   paleta pastel de baja saturación para que descanse la vista.
+   Colores grandes = tonos pálidos · acentos = tonos un poco más vivos.
+   Todo en CSS, sin imágenes.
+   ============================================================ */
+
+:root {
+  --font-display: 'Fredoka', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Nunito', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  /* Paleta suave */
+  --rosa-suave: #F7B5CA;
+  --rosa: #F589A6;         /* rosa medio (acentos) */
+  --rosa-hondo: #C85C80;   /* rosa para texto/foco */
+  --rosa-lila: #F0A8D0;
+  --rosa-claro: #FFC6C6;
+  --coral: #FB9B8F;
+  --durazno: #FDC3A1;
+  --melocoton: #FFB399;
+  --apricot: #FFD6A6;
+  --crema: #FFF0BE;
+  --crema-clara: #FFF7CD;
+  --crema-durazno: #FFEBD4;
+
+  /* Texto (ciruela suave, legible sobre el vidrio claro) */
+  --ink: #5B3540;
+  --ink-soft: #825966;
+
+  --radius-lg: 30px;
+  --radius-pill: 999px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  margin: 0;
+  padding: clamp(16px, 4vw, 40px);
+  min-height: 100vh;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  /* Cielo suave: rosa arriba → durazno → crema en el horizonte */
+  background:
+    radial-gradient(90% 50% at 50% -8%, rgba(240, 168, 208, .28), transparent 62%),   /* rosa arriba, tenue */
+    radial-gradient(120% 65% at 50% 116%, rgba(255, 247, 205, .55), transparent 62%),  /* horizonte crema, tenue */
+    linear-gradient(180deg,
+      #F5AEC6 0%,     /* rosa suave (protagonista) */
+      #FBBEC6 15%,    /* rosa-coral suave */
+      #FCC6AE 33%,    /* durazno rosado */
+      #FFD3AA 53%,    /* apricot */
+      #FFE3C4 76%,
+      #FFF2D2 100%);  /* crema pálida */
+}
+
+/* ============================================================
+   Cielo decorativo: sol, nubes y orbes difuminados
+   ============================================================ */
+.cielo {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Sol suave poniéndose */
+.sol {
+  position: absolute;
+  left: 50%;
+  bottom: -30px;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  opacity: .9;
+  background: radial-gradient(circle at 50% 42%,
+    #FFF7DA 0%, #FFEDC0 50%, #FFDCAC 72%, rgba(255, 220, 172, 0) 78%);
+  box-shadow:
+    0 0 100px 50px rgba(255, 225, 185, .38),
+    0 0 200px 110px rgba(255, 195, 175, .20);
+  animation: latir 8s ease-in-out infinite;
+}
+
+@keyframes latir {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50%      { transform: translateX(-50%) scale(1.04); }
+}
+
+/* Nubes tenues teñidas de rosa */
+.nube {
+  position: absolute;
+  border-radius: 100px;
+  filter: blur(18px);
+  opacity: .32;
+  background: linear-gradient(90deg, rgba(255, 255, 255, .6), rgba(247, 181, 202, .40));
+}
+.nube--1 { width: 320px; height: 74px; top: 15%; left: -12%; animation: derivar 36s linear infinite; }
+.nube--2 { width: 230px; height: 58px; top: 30%; right: -12%; animation: derivar 48s linear infinite reverse; }
+
+@keyframes derivar {
+  from { transform: translateX(0); }
+  to   { transform: translateX(60px); }
+}
+
+/* Orbes de luz muy suaves (bokeh), con predominio rosado */
+.orbe {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(9px);
+}
+.orbe--1 { width: 190px; height: 190px; top: 9%;  left: -40px; opacity: .36; background: radial-gradient(circle, #F5B6D0, transparent 70%); animation: flotar 18s ease-in-out infinite; }
+.orbe--2 { width: 140px; height: 140px; top: 22%; right: -30px; opacity: .30; background: radial-gradient(circle, #FFD2A6, transparent 70%); animation: flotar 22s ease-in-out infinite 1s reverse; }
+.orbe--3 { width: 120px; height: 120px; bottom: 24%; left: 12%; opacity: .28; background: radial-gradient(circle, #FFC6C6, transparent 70%); animation: flotar 16s ease-in-out infinite 2s; }
+
+@keyframes flotar {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-16px) rotate(5deg); }
+}
+
+/* ============================================================
+   Tarjeta tipo vidrio (marmoleado + luz + sombra tenue)
+   ============================================================ */
+.tarjeta {
+  position: relative;
+  z-index: 2;
+  margin: auto;
+  width: 100%;
+  max-width: 440px;
+  padding: clamp(2rem, 5vw, 3rem) clamp(1.5rem, 4vw, 2.5rem);
+  text-align: center;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, .7);
+  background:
+    radial-gradient(130% 90% at 50% -20%, rgba(255, 255, 255, .72), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(180deg, rgba(255, 253, 250, .84), rgba(255, 248, 245, .76));
+  box-shadow:
+    0 42px 80px -32px rgba(205, 120, 140, .32),
+    0 16px 34px -18px rgba(170, 110, 120, .20),
+    inset 0 1px 0 rgba(255, 255, 255, .90);
+  -webkit-backdrop-filter: blur(18px) saturate(1.03);
+  backdrop-filter: blur(18px) saturate(1.03);   /* menos saturación = menos chillón */
+}
+
+/* ============================================================
+   Título y subtítulo
+   ============================================================ */
+h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2rem, 7vw, 2.8rem);
+  line-height: 1.1;
+  letter-spacing: -.5px;
+  margin: 0;
+  color: var(--rosa-hondo);
+  background: linear-gradient(180deg, #CE6488 0%, #B85074 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 6px rgba(200, 110, 140, .20));
+}
+
+/* Solcito en CSS junto al título (en la misma gama cálida) */
+h1::before {
+  content: "";
+  display: inline-block;
+  width: .82em;
+  height: .82em;
+  margin-right: .42rem;
+  vertical-align: -0.06em;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 38%, #FFEFC4, #FFD39C 62%, #FFBE94);
+  box-shadow: 0 0 10px rgba(255, 190, 150, .55);
+  animation: latir 6s ease-in-out infinite;
+}
+
+.subtitulo {
+  margin: .7rem 0 1.8rem;
+  color: var(--ink-soft);
+  font-size: 1.06rem;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   Enlaces (botones glossy en columna, tipo menú)
+   ============================================================ */
+.enlaces {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+}
+
+.boton {
+  display: block;
+  width: 100%;
+  text-decoration: none;
+  text-align: center;
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--ink);
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  padding: .95rem 1.4rem;
+  transition: transform .15s ease, box-shadow .15s ease,
+              filter .15s ease, border-color .15s ease;
+}
+
+/* Botón principal = Juego Limones (degradado atardecer suave, rosa al final) */
+.boton--principal {
+  font-size: 1.15rem;
+  background: linear-gradient(135deg,
+    var(--apricot) 0%, var(--durazno) 38%, var(--coral) 72%, var(--rosa) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .50),
+    0 12px 24px -12px rgba(220, 140, 160, .48);
+}
+.boton--principal:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .50),
+    0 18px 30px -12px rgba(220, 140, 160, .52);
+}
+
+/* Botón secundario = Ir a Google (crema translúcido, contorno durazno) */
+.boton--secundario {
+  font-size: 1rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .58), rgba(255, 243, 214, .74));
+  border-color: rgba(253, 195, 161, .60);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .85),
+    0 8px 18px -10px rgba(200, 130, 100, .32);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.boton--secundario:hover {
+  transform: translateY(-3px);
+  border-color: var(--durazno);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(255, 237, 200, .82));
+}
+
+.boton:active {
+  transform: translateY(0);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, .10);
+}
+
+/* Foco visible con teclado (accesibilidad) */
+.boton:focus-visible {
+  outline: 3px solid var(--rosa-hondo);
+  outline-offset: 3px;
+}
+
+/* ============================================================
+   Pantallas pequeñas
+   ============================================================ */
+@media (max-width: 500px) {
+  .sol { width: 200px; height: 200px; }
+  .orbe--3, .nube--2 { display: none; }
+}
+
+/* ============================================================
+   Preferencia del sistema: menos movimiento
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
